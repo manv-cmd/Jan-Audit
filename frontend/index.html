@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Social Audit Portal</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header>
+  <div class="logo">SocialAudit</div>
+  <nav>
+    <a href="#dashboard">Dashboard</a>
+    <a href="#projects">Projects</a>
+    <a href="#findings">Findings</a>
+  </nav>
+</header>
+
+<section class="auth-panel">
+  <h2>User Authentication</h2>
+  <div class="form">
+    <input id="username" placeholder="Username">
+    <input id="password" type="password" placeholder="Password">
+    <button onclick="register()">Register</button>
+    <button onclick="login()">Login</button>
+    <button class="logout" onclick="logout()">Logout</button>
+  </div>
+  <p id="authMessage"></p>
+</section>
+
+<main>
+  <section class="hero" id="dashboard">
+    <p class="tag">TRANSPARENCY • ACCOUNTABILITY • PARTICIPATION</p>
+    <h1>Social Audit Portal</h1>
+    <p>Monitor public projects, budgets, audit status and community findings.</p>
+    <button onclick="loadDashboard()">Refresh Dashboard</button>
+  </section>
+
+  <section class="stats">
+    <div class="card"><b id="total">0</b><span>Total Projects</span></div>
+    <div class="card"><b id="completed">0</b><span>Completed</span></div>
+    <div class="card"><b id="pending">0</b><span>Pending</span></div>
+    <div class="card"><b id="findingCount">0</b><span>Findings</span></div>
+  </section>
+
+  <section class="section" id="projects">
+    <div class="toolbar">
+      <h2>Public Projects</h2>
+      <div>
+        <input id="search" placeholder="Search..." oninput="renderProjects()">
+        <select id="statusFilter" onchange="renderProjects()">
+          <option value="">All Status</option>
+          <option>Completed</option>
+          <option>In Progress</option>
+          <option>Audit Pending</option>
+        </select>
+      </div>
+    </div>
+    <div id="projectList" class="grid"></div>
+  </section>
+
+  <section class="section">
+    <h2>Add Project</h2>
+    <form id="projectForm" class="form">
+      <input id="name" placeholder="Project name" required>
+      <input id="village" placeholder="Village" required>
+      <input id="budget" type="number" min="0" placeholder="Budget" required>
+      <select id="status">
+        <option>Audit Pending</option>
+        <option>In Progress</option>
+        <option>Completed</option>
+      </select>
+      <button>Add Project</button>
+    </form>
+    <p id="message"></p>
+  </section>
+
+  <section class="section" id="findings">
+    <h2>Audit Findings</h2>
+    <form id="findingForm" class="form">
+      <input id="findingText" placeholder="Finding description" required>
+      <input id="findingProject" placeholder="Project name" required>
+      <button>Add Finding</button>
+    </form>
+    <div id="findingList"></div>
+  </section>
+</main>
+
+<footer>© 2026 Social Audit Portal • Full-Stack Student Project</footer>
+
+<script src="auth.js"></script>
+<script src="middleware.js"></script>
+<script src="script.js"></script>
+</body>
+</html>
