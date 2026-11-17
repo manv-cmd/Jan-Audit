@@ -93,7 +93,8 @@
       const btn = document.getElementById("login-btn");
       error.textContent = "";
       btn.disabled = true;
-      btn.textContent = "Signing in…";
+      btn.classList.add("loading");
+      btn.innerHTML = '<span class="btn-spinner" aria-hidden="true"></span> <span>Signing in…</span>';
       try {
         await A.login(data.get("email"), data.get("password"), data.has("remember"));
         location.replace("dashboard.html");
@@ -101,6 +102,7 @@
         error.textContent = err.message;
         document.getElementById("password").setAttribute("aria-invalid", "true");
         btn.disabled = false;
+        btn.classList.remove("loading");
         btn.innerHTML = "Sign in <span>" + icon("arrow-right", 17) + "</span>";
         if (window.lucide) lucide.createIcons();
       }
