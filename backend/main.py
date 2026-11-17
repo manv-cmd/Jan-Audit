@@ -1,136 +1,58 @@
-import logging
+"""
+JAN Audit — FastAPI backend entry point.
 
-from fastapi import FastAPI, Depends, HTTPException
+Start with:
+    uvicorn main:app --reload --host 127.0.0.1 --port 8000
+"""
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.security import HTTPAuthorizationCredentials
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker, Session
 
-from models import Base, User, Project, Finding
-from schemas import AuthIn, ProjectIn, FindingIn
-from auth import hash_password, verify_password, create_access_token, get_current_user, security
-from middleware import request_logging_middleware
+from app.core.config import settings
+from app.database import Base, engine
+from app.routers import auth, findings, projects
+from app.seed import seed
 
-DATABASE_URL = "sqlite:///./social_audit.db"
-
-engine = create_engine(DATABASE_URL, connect_args={"check_same_thread": False})
-SessionLocal = sessionmaker(bind=engine, autoflush=False, autocommit=False)
+# ── Create tables & seed on first run ────────────────────────────────────────
 Base.metadata.create_all(bind=engine)
+seed()
 
-app = FastAPI(title="Social Audit API")
+# ── App ───────────────────────────────────────────────────────────────────────
+app = FastAPI(
+    title="JAN Audit API",
+    description="Backend for the Jan Audit social audit portal.",
+    version="1.0.0",
+    docs_url="/docs",
+    redoc_url="/redoc",
+)
+
+# ── CORS ──────────────────────────────────────────────────────────────────────
+# In development the frontend is served as a local file (file://) or a
+# different port, so we allow all origins.  Lock this down in production.
+origins = (
+    ["*"]
+    if settings.ALLOWED_ORIGINS.strip() == "*"
+    else [o.strip() for o in settings.ALLOWED_ORIGINS.split(",")]
+)
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
-app.middleware("http")(request_logging_middleware)
-logging.basicConfig(level=logging.INFO)
+
+# ── Routers ───────────────────────────────────────────────────────────────────
+app.include_router(auth.router)
+app.include_router(projects.router)
+app.include_router(findings.router)
 
 
-def db():
-    session = SessionLocal()
-    try:
-        yield session
-    finally:
-        session.close()
-
-
-def current_user(
-    credentials: HTTPAuthorizationCredentials = Depends(security),
-    session: Session = Depends(db),
-):
-    return get_current_user(credentials, session)
-
-
-@app.get("/")
+@app.get("/", tags=["health"])
 def root():
-    return {"message": "Social Audit API is running"}
+    return {"status": "ok", "app": "JAN Audit API", "version": "1.0.0"}
 
 
-@app.post("/register")
-def register(data: AuthIn, session: Session = Depends(db)):
-    if session.query(User).filter(User.username == data.username).first():
-        raise HTTPException(400, "Username already exists")
-
-    user = User(username=data.username, hashed_password=hash_password(data.password))
-    session.add(user)
-    session.commit()
-    return {"message": "Registration successful"}
-
-
-@app.post("/login")
-def login(data: AuthIn, session: Session = Depends(db)):
-    user = session.query(User).filter(User.username == data.username).first()
-    if not user or not verify_password(data.password, user.hashed_password):
-        raise HTTPException(401, "Invalid username or password")
-
-    return {"access_token": create_access_token(user.username), "token_type": "bearer"}
-
-
-@app.get("/projects")
-def get_projects(_: User = Depends(current_user), session: Session = Depends(db)):
-    projects = session.query(Project).all()
-    if not projects:
-        projects = [
-            Project(name="Rural Road Development", village="Rampur", budget=1850000, status="Completed"),
-            Project(name="Water Supply Scheme", village="Lakshmipur", budget=1220000, status="In Progress"),
-            Project(name="Community Health Center", village="Shivpur", budget=2500000, status="Audit Pending"),
-        ]
-        session.add_all(projects)
-        session.commit()
-    return session.query(Project).all()
-
-
-@app.get("/projects/{project_id}")
-def get_project(project_id: int, _: User = Depends(current_user), session: Session = Depends(db)):
-    project = session.get(Project, project_id)
-    if not project:
-        raise HTTPException(404, "Project not found")
-    return project
-
-
-@app.post("/projects")
-def create_project(data: ProjectIn, _: User = Depends(current_user), session: Session = Depends(db)):
-    project = Project(**data.model_dump())
-    session.add(project)
-    session.commit()
-    session.refresh(project)
-    return project
-
-
-@app.put("/projects/{project_id}")
-def update_project(project_id: int, data: ProjectIn, _: User = Depends(current_user), session: Session = Depends(db)):
-    project = session.get(Project, project_id)
-    if not project:
-        raise HTTPException(404, "Project not found")
-    for key, value in data.model_dump().items():
-        setattr(project, key, value)
-    session.commit()
-    session.refresh(project)
-    return project
-
-
-@app.delete("/projects/{project_id}")
-def delete_project(project_id: int, _: User = Depends(current_user), session: Session = Depends(db)):
-    project = session.get(Project, project_id)
-    if not project:
-        raise HTTPException(404, "Project not found")
-    session.delete(project)
-    session.commit()
-    return {"message": "Project deleted"}
-
-
-@app.get("/findings")
-def get_findings(_: User = Depends(current_user), session: Session = Depends(db)):
-    return session.query(Finding).order_by(Finding.id.desc()).all()
-
-
-@app.post("/findings")
-def create_finding(data: FindingIn, _: User = Depends(current_user), session: Session = Depends(db)):
-    finding = Finding(**data.model_dump())
-    session.add(finding)
-    session.commit()
-    session.refresh(finding)
-    return finding
+@app.get("/health", tags=["health"])
+def health():
+    return {"status": "ok"}
