@@ -4,7 +4,16 @@
     const node = document.getElementById(canvasId);
     if (!node || !window.Chart) return;
     if (activeCharts[canvasId]) activeCharts[canvasId].destroy();
-    activeCharts[canvasId] = new Chart(node, { ...config, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, ...config.options?.plugins }, ...config.options } });
+    const mergedPlugins = { legend: { display: false }, ...(config.options?.plugins || {}) };
+    activeCharts[canvasId] = new Chart(node, {
+      ...config,
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        ...(config.options || {}),
+        plugins: mergedPlugins
+      }
+    });
   }
   function status(canvasId, projects) {
     const counts = ["Completed", "In Progress", "Pending"].map((status) => projects.filter((project) => project.status === status).length);
