@@ -7,15 +7,39 @@
     { id: "JA-2025-003", name: "Drinking water pipeline project", description: "Household water connections and a 3.2 km distribution pipeline to improve access to safe drinking water.", village: "Anandpur", block: "Phulpur", district: "Prayagraj", budget: 6720000, startDate: "2025-04-01", expectedDate: "2026-03-31", status: "In Progress", sample: true, createdAt: "2025-03-25T09:00:00.000Z", updatedAt: "2025-10-22T13:15:00.000Z" },
     { id: "JA-2025-004", name: "Renovation of primary health centre", description: "Repair of the outpatient wing, accessible washrooms, roofing and electrical systems at the local PHC.", village: "Lakshmipur", block: "Handia", district: "Prayagraj", budget: 3540000, startDate: "2025-06-01", expectedDate: "2026-01-31", status: "Pending", sample: true, createdAt: "2025-05-22T09:00:00.000Z", updatedAt: "2025-10-17T08:30:00.000Z" },
     { id: "JA-2025-005", name: "Construction of community sanitation facilities", description: "Construction of a community sanitation complex with separate facilities, water supply and accessible design.", village: "Devgaon", block: "Soraon", district: "Prayagraj", budget: 2190000, startDate: "2024-11-15", expectedDate: "2025-07-31", status: "Completed", sample: true, createdAt: "2024-11-04T09:00:00.000Z", updatedAt: "2025-08-12T10:00:00.000Z" },
-    { id: "JA-2025-006", name: "Village drainage improvement", description: "Rehabilitation of 1.8 km of stormwater drains and construction of covered sections near the school.", village: "Rajpur", block: "Bahadurpur", district: "Prayagraj", budget: 2960000, startDate: "2025-03-01", expectedDate: "2025-12-15", status: "In Progress", sample: true, createdAt: "2025-02-20T09:00:00.000Z", updatedAt: "2025-10-30T09:45:00.000Z" }
+    { id: "JA-2025-006", name: "Village drainage improvement", description: "Rehabilitation of 1.8 km of stormwater drains and construction of covered sections near the school.", village: "Rajpur", block: "Bahadurpur", district: "Prayagraj", budget: 2960000, startDate: "2025-03-01", expectedDate: "2025-12-15", status: "In Progress", sample: true, createdAt: "2025-02-20T09:00:00.000Z", updatedAt: "2025-10-30T09:45:00.000Z" },
+    { id: "JA-2025-007", name: "Rainwater harvesting pond and groundwater recharge unit", description: "Excavation and revetment lining of a 0.8-hectare percolation pond with silt traps to recharge local aquifers and prevent seasonal waterlogging.", village: "Shivpur", block: "Koraon", district: "Prayagraj", budget: 1840000, startDate: "2025-05-10", expectedDate: "2025-12-20", status: "Completed", sample: true, createdAt: "2025-05-02T08:30:00.000Z", updatedAt: "2025-12-18T14:10:00.000Z" },
+    { id: "JA-2025-008", name: "Upgradation of Anganwadi centre with child-friendly amenities", description: "Construction of a dedicated nutrition kitchen shed, child-friendly learning walls, clean drinking water filtration, and solar rooftop electrification.", village: "Rampur", block: "Sadar", district: "Prayagraj", budget: 1420000, startDate: "2025-07-01", expectedDate: "2026-02-28", status: "In Progress", sample: true, createdAt: "2025-06-25T09:15:00.000Z", updatedAt: "2025-11-04T11:20:00.000Z" },
+    { id: "JA-2025-009", name: "Multi-purpose community flood & cyclone shelter", description: "Reinforced two-storey public shelter equipped with raised plinth, solar micro-grid backup, rainwater cisterns, and separate sanitation blocks for disaster resilience.", village: "Rajpur", block: "Bahadurpur", district: "Prayagraj", budget: 8250000, startDate: "2025-08-15", expectedDate: "2026-06-30", status: "Pending", sample: true, createdAt: "2025-08-01T10:00:00.000Z", updatedAt: "2025-08-15T09:00:00.000Z" },
+    { id: "JA-2025-010", name: "Panchayat digital service kiosk and library", description: "Setting up a high-speed fiber-connected citizen service centre with 8 public computer terminals, biometric authentication desks, and a community reading hall.", village: "Anandpur", block: "Phulpur", district: "Prayagraj", budget: 2480000, startDate: "2025-06-12", expectedDate: "2026-01-15", status: "In Progress", sample: true, createdAt: "2025-06-05T11:30:00.000Z", updatedAt: "2025-11-08T15:40:00.000Z" },
+    { id: "JA-2025-011", name: "Solid waste segregation shed and vermicomposting pits", description: "Establishment of a village-level resource recovery centre with dry/wet waste segregation bays and 6 active vermicomposting beds for organic waste processing.", village: "Lakshmipur", block: "Handia", district: "Prayagraj", budget: 1690000, startDate: "2025-04-18", expectedDate: "2025-10-31", status: "Completed", sample: true, createdAt: "2025-04-10T09:00:00.000Z", updatedAt: "2025-11-12T10:20:00.000Z" },
+    { id: "JA-2025-012", name: "Veterinary dispensary and livestock care facility", description: "Civil construction of a dedicated animal treatment bay, solar cold-chain storage for veterinary vaccines, and diagnostic facility for rural cattle breeders.", village: "Devgaon", block: "Soraon", district: "Prayagraj", budget: 3160000, startDate: "2025-09-01", expectedDate: "2026-05-15", status: "Pending", sample: true, createdAt: "2025-08-20T08:00:00.000Z", updatedAt: "2025-09-01T09:00:00.000Z" }
   ];
   const sampleFindings = [
     { id: "AF-2025-001", projectId: "JA-2025-001", description: "Two stretches show uneven compaction compared with the approved specification. Recheck before final measurement.", auditor: "Ravi Kumar", date: "2025-10-28", severity: "Medium", sample: true, createdAt: "2025-10-28T10:30:00.000Z" },
     { id: "AF-2025-002", projectId: "JA-2025-003", description: "Three sampled household connections were not reflected in the site measurement register.", auditor: "Ravi Kumar", date: "2025-10-25", severity: "High", sample: true, createdAt: "2025-10-25T12:15:00.000Z" },
     { id: "AF-2025-003", projectId: "JA-2025-002", description: "One installed light is intermittently offline. Verify battery performance during the warranty inspection.", auditor: "Ananya Sharma", date: "2025-10-19", severity: "Low", sample: true, createdAt: "2025-10-19T09:45:00.000Z" },
-    { id: "AF-2025-004", projectId: "JA-2025-006", description: "Provide updated site photographs and confirm the drain cover quantities against the bill of quantities.", auditor: "Ravi Kumar", date: "2025-10-15", severity: "Medium", sample: true, createdAt: "2025-10-15T11:25:00.000Z" }
+    { id: "AF-2025-004", projectId: "JA-2025-006", description: "Provide updated site photographs and confirm the drain cover quantities against the bill of quantities.", auditor: "Ravi Kumar", date: "2025-10-15", severity: "Medium", sample: true, createdAt: "2025-10-15T11:25:00.000Z" },
+    { id: "AF-2025-005", projectId: "JA-2025-008", description: "Water filtration unit delivered to site does not match the BIS-certified model specified in the technical tender. Installation halted pending verification.", auditor: "Ananya Sharma", date: "2025-11-04", severity: "High", sample: true, createdAt: "2025-11-04T10:00:00.000Z" },
+    { id: "AF-2025-006", projectId: "JA-2025-010", description: "Earthing pit resistance measured higher than permissible limit for electronic equipment. Re-grounding required before connecting UPS backup.", auditor: "Ravi Kumar", date: "2025-11-08", severity: "Medium", sample: true, createdAt: "2025-11-08T11:30:00.000Z" },
+    { id: "AF-2025-007", projectId: "JA-2025-011", description: "Shed roof overhang requires additional wind bracing along the south-western face to conform with seasonal wind load guidelines.", auditor: "Ravi Kumar", date: "2025-11-12", severity: "Low", sample: true, createdAt: "2025-11-12T09:15:00.000Z" }
   ];
 
+    function mergeDefaults(key, defaults) {
+    const stored = read(key, null);
+    if (!stored || !Array.isArray(stored)) {
+      write(key, defaults);
+      return defaults.slice();
+    }
+    const ids = new Set(stored.map((item) => item.id));
+    const missing = defaults.filter((item) => !ids.has(item.id));
+    if (missing.length > 0) {
+      const merged = [...stored, ...missing];
+      write(key, merged);
+      return merged;
+    }
+    return stored;
+  }
   function read(key, fallback) {
     try {
       const value = localStorage.getItem(JanAuditConfig.STORAGE_PREFIX + key);
@@ -81,7 +105,7 @@
       }
     },
     projects: {
-      list: () => read(keys.projects, null) || (write(keys.projects, sampleProjects), sampleProjects.slice()),
+      list: () => mergeDefaults(keys.projects, sampleProjects),
       get: (projectId) => repos.projects.list().find((project) => project.id === projectId) || null,
       async create(data) {
         let project = null;
@@ -138,7 +162,7 @@
       }
     },
     findings: {
-      list: () => read(keys.findings, null) || (write(keys.findings, sampleFindings), sampleFindings.slice()),
+      list: () => mergeDefaults(keys.findings, sampleFindings),
       get: (findingId) => repos.findings.list().find((finding) => finding.id === findingId) || null,
       async create(data) {
         if (!repos.projects.get(data.projectId)) throw new Error("Select an existing project for this finding.");
