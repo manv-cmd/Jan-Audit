@@ -108,40 +108,27 @@
       list: () => mergeDefaults(keys.projects, sampleProjects),
       get: (projectId) => repos.projects.list().find((project) => project.id === projectId) || null,
       async create(data) {
-        let project = null;
         if (window.JanAuditApi && (!window.JanAuditConfig || window.JanAuditConfig.DATA_MODE === "api") && localStorage.getItem("jan-audit:access-token")) {
-          try {
-            project = await window.JanAuditApi.post("/projects", data);
-          } catch (e) {
-            console.warn("API create failed, falling back to local storage:", e);
-          }
+          const project = await window.JanAuditApi.post("/projects", data);
+          const all = this.list().filter((p) => p.id !== project.id);
+          all.unshift(project);
+          write(keys.projects, all);
+          addActivity("Project created", project.name);
+          return project;
         }
-        const all = this.list();
-        if (!project) {
-          project = { ...data, id: id("JA", all), sample: false, createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() };
-        }
-        const next = all.filter((p) => p.id !== project.id);
-        next.unshift(project);
-        write(keys.projects, next);
-        addActivity("Project created", project.name);
-        return project;
+        throw new Error("Unable to reach the Jan Audit server. Please make sure the backend is running and try again.");
       },
       async update(projectId, data) {
-        let updated = null;
         if (window.JanAuditApi && (!window.JanAuditConfig || window.JanAuditConfig.DATA_MODE === "api") && localStorage.getItem("jan-audit:access-token")) {
-          try {
-            updated = await window.JanAuditApi.put("/projects/" + encodeURIComponent(projectId), data);
-          } catch (e) {
-            console.warn("API update failed, falling back to local storage:", e);
-          }
+          const updated = await window.JanAuditApi.put("/projects/" + encodeURIComponent(projectId), data);
+          const all = this.list();
+          const index = all.findIndex((project) => project.id === projectId);
+          if (index < 0) all.unshift(updated); else all[index] = updated;
+          write(keys.projects, all);
+          addActivity("Project updated", updated.name);
+          return updated;
         }
-        const all = this.list();
-        const index = all.findIndex((project) => project.id === projectId);
-        if (index < 0) throw new Error("Project not found.");
-        all[index] = updated || { ...all[index], ...data, updatedAt: new Date().toISOString() };
-        write(keys.projects, all);
-        addActivity("Project updated", all[index].name);
-        return all[index];
+        throw new Error("Unable to reach the Jan Audit server. Please make sure the backend is running and try again.");
       },
       async delete(projectId) {
         const all = this.list();
@@ -151,14 +138,12 @@
           throw new Error("This project has audit findings. Resolve or remove those findings before deleting the project.");
         }
         if (window.JanAuditApi && (!window.JanAuditConfig || window.JanAuditConfig.DATA_MODE === "api") && localStorage.getItem("jan-audit:access-token")) {
-          try {
-            await window.JanAuditApi.delete("/projects/" + encodeURIComponent(projectId));
-          } catch (e) {
-            console.warn("API delete failed:", e);
-          }
+          await window.JanAuditApi.delete("/projects/" + encodeURIComponent(projectId));
+          write(keys.projects, all.filter((entry) => entry.id !== projectId));
+          addActivity("Project deleted", project.name);
+          return;
         }
-        write(keys.projects, all.filter((entry) => entry.id !== projectId));
-        addActivity("Project deleted", project.name);
+        throw new Error("Unable to reach the Jan Audit server. Please make sure the backend is running and try again.");
       }
     },
     findings: {
@@ -166,37 +151,27 @@
       get: (findingId) => repos.findings.list().find((finding) => finding.id === findingId) || null,
       async create(data) {
         if (!repos.projects.get(data.projectId)) throw new Error("Select an existing project for this finding.");
-        let finding = null;
         if (window.JanAuditApi && (!window.JanAuditConfig || window.JanAuditConfig.DATA_MODE === "api") && localStorage.getItem("jan-audit:access-token")) {
-          try {
-            finding = await window.JanAuditApi.post("/findings", data);
-          } catch (e) {
-            console.warn("API create finding failed, falling back to local storage:", e);
-          }
+          const finding = await window.JanAuditApi.post("/findings", data);
+          const all = this.list().filter((f) => f.id !== finding.id);
+          all.unshift(finding);
+          write(keys.findings, all);
+          addActivity("Audit finding recorded", finding.id);
+          return finding;
         }
-        const all = this.list();
-        if (!finding) {
-          finding = { ...data, id: id("AF", all), sample: false, createdAt: new Date().toISOString() };
-        }
-        const next = all.filter((f) => f.id !== finding.id);
-        next.unshift(finding);
-        write(keys.findings, next);
-        addActivity("Audit finding recorded", finding.id);
-        return finding;
+        throw new Error("Unable to reach the Jan Audit server. Please make sure the backend is running and try again.");
       },
       async delete(findingId) {
         const all = this.list();
         const finding = all.find((entry) => entry.id === findingId);
         if (!finding) throw new Error("Finding not found.");
         if (window.JanAuditApi && (!window.JanAuditConfig || window.JanAuditConfig.DATA_MODE === "api") && localStorage.getItem("jan-audit:access-token")) {
-          try {
-            await window.JanAuditApi.delete("/findings/" + encodeURIComponent(findingId));
-          } catch (e) {
-            console.warn("API delete finding failed:", e);
-          }
+          await window.JanAuditApi.delete("/findings/" + encodeURIComponent(findingId));
+          write(keys.findings, all.filter((entry) => entry.id !== findingId));
+          addActivity("Audit finding removed", finding.id);
+          return;
         }
-        write(keys.findings, all.filter((entry) => entry.id !== findingId));
-        addActivity("Audit finding removed", finding.id);
+        throw new Error("Unable to reach the Jan Audit server. Please make sure the backend is running and try again.");
       }
     },
     activity: {
