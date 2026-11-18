@@ -50,8 +50,8 @@ echo       Dependencies ready.
 echo.
 
 :: Start backend API server
-echo [2/3] Starting backend API server at http://127.0.0.1:8000 ...
-start "JAN Audit Backend Server (Port 8000)" %PYTHON_EXE% -m uvicorn main:app --reload --host 127.0.0.1 --port 8000
+echo [2/3] Starting backend API server at http://127.0.0.1:8001 ...
+start "JAN Audit Backend Server (Port 8001)" %PYTHON_EXE% -m uvicorn main:app --reload --host 127.0.0.1 --port 8001
 
 :: Wait 2 seconds for server to bind
 timeout /t 2 >nul
@@ -64,8 +64,8 @@ echo.
 
 echo ===================================================
 echo  JAN Audit Portal is running!
-echo  Backend API:  http://127.0.0.1:8000
-echo  API Docs:     http://127.0.0.1:8000/docs
+echo  Backend API:  http://127.0.0.1:8001
+echo  API Docs:     http://127.0.0.1:8001/docs
 echo.
 echo  To shut down the portal, run 'stop-portal.bat'.
 echo ===================================================

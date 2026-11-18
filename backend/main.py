@@ -48,6 +48,13 @@ app.include_router(auth.router)
 app.include_router(projects.router)
 app.include_router(findings.router)
 
+import os
+from fastapi.staticfiles import StaticFiles
+
+frontend_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "frontend"))
+if os.path.exists(frontend_dir):
+    app.mount("/portal", StaticFiles(directory=frontend_dir, html=True), name="portal")
+
 
 @app.get("/", tags=["health"])
 def root():

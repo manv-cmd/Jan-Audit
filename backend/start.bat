@@ -32,10 +32,10 @@ if errorlevel 1 (
 
 echo.
 echo Starting JAN Audit API server...
-echo Backend will run at http://127.0.0.1:8000
-echo API docs available at http://127.0.0.1:8000/docs
+echo Backend will run at http://127.0.0.1:8001
+echo API docs available at http://127.0.0.1:8001/docs
 echo Press Ctrl+C to stop.
 echo.
 
-%PYTHON_EXE% -m uvicorn main:app --reload --host 127.0.0.1 --port 8000
+%PYTHON_EXE% -m uvicorn main:app --reload --host 127.0.0.1 --port 8001
 pause

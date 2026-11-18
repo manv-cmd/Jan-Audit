@@ -2,7 +2,7 @@
 const apiHost = window.location.hostname || "127.0.0.1";
 
 window.JanAuditConfig = Object.freeze({
-  API_BASE_URL: `http://${apiHost}:8000`,
+  API_BASE_URL: `http://${apiHost}:8001`,
   DATA_MODE: "api",
   STORAGE_PREFIX: "jan-audit:"
 });

@@ -52,7 +52,7 @@
 
       let response, body;
       try {
-        const baseUrl = (window.JanAuditConfig && window.JanAuditConfig.API_BASE_URL) || "http://127.0.0.1:8000";
+        const baseUrl = (window.JanAuditConfig && window.JanAuditConfig.API_BASE_URL) || "http://127.0.0.1:8001";
         response = await fetch(
           baseUrl.replace(/\/$/, "") + "/auth/login",
           {
