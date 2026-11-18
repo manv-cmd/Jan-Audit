@@ -22,13 +22,21 @@
     const p = project || { name: "", description: "", village: "", block: "", district: "", budget: "", startDate: "", expectedDate: "", status: "Pending" };
     return `<form id="project-form" class="modal-form" novalidate><input type="hidden" name="id" value="${U.esc(p.id || "")}"><div class="form-grid"><div class="field full"><label for="p-name">Project name <span>*</span></label><input id="p-name" name="name" required maxlength="120" value="${U.esc(p.name)}" placeholder="e.g. Community road improvement"></div><div class="field full"><label for="p-description">Description <span>*</span></label><textarea id="p-description" name="description" rows="3" maxlength="800" required placeholder="Scope and intended outcomes of the work">${U.esc(p.description)}</textarea></div><div class="field"><label for="p-village">Village <span>*</span></label><input id="p-village" name="village" required maxlength="80" list="village-options" value="${U.esc(p.village)}"><datalist id="village-options">${S.villages.map((v) => `<option value="${U.esc(v)}">`).join("")}</datalist></div><div class="field"><label for="p-block">Block <span>*</span></label><input id="p-block" name="block" required maxlength="80" value="${U.esc(p.block)}"></div><div class="field"><label for="p-district">District <span>*</span></label><input id="p-district" name="district" required maxlength="80" value="${U.esc(p.district)}"></div><div class="field"><label for="p-budget">Sanctioned budget (₹) <span>*</span></label><input id="p-budget" name="budget" type="number" min="1" step="1" required value="${U.esc(p.budget)}"></div><div class="field"><label for="p-start">Start date <span>*</span></label><input id="p-start" name="startDate" type="date" required value="${U.esc(p.startDate)}"></div><div class="field"><label for="p-expected">Expected completion <span>*</span></label><input id="p-expected" name="expectedDate" type="date" required value="${U.esc(p.expectedDate)}"></div><div class="field"><label for="p-status">Execution status <span>*</span></label><select id="p-status" name="status"><option ${p.status === "Pending" ? "selected" : ""}>Pending</option><option ${p.status === "In Progress" ? "selected" : ""}>In Progress</option><option ${p.status === "Completed" ? "selected" : ""}>Completed</option></select></div></div><p class="form-error" id="project-form-error" role="alert"></p><div class="modal-actions"><button type="button" class="button button-outline" data-modal-close>Cancel</button><button type="submit" class="button button-primary">${project ? "Save changes" : "Create project"}</button></div></form>`;
   }
-  function showForm(project) { const root = U.modal(project ? "Edit project" : "Add a project", formMarkup(project), true); root.querySelector("#project-form").addEventListener("submit", (event) => {
+  function showForm(project) { const root = U.modal(project ? "Edit project" : "Add a project", formMarkup(project), true); root.querySelector("#project-form").addEventListener("submit", async (event) => {
     event.preventDefault(); const form = event.currentTarget, values = Object.fromEntries(new FormData(form)); const error = root.querySelector("#project-form-error");
     if (!form.reportValidity()) return;
     if (new Date(values.expectedDate) < new Date(values.startDate)) { error.textContent = "Expected completion must be on or after the start date."; return; }
     values.budget = Number(values.budget); if (!Number.isFinite(values.budget) || values.budget <= 0) { error.textContent = "Enter a budget greater than zero."; return; }
-    try { if (values.id) S.projects.update(values.id, values); else S.projects.create(values); U.closeModal(); refresh(); U.notify(values.id ? "Project updated successfully." : "Project created successfully."); }
-    catch (err) { error.textContent = err.message; }
+    const submitBtn = form.querySelector("button[type='submit']");
+    if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = "Saving…"; }
+    try {
+      if (values.id) await S.projects.update(values.id, values);
+      else await S.projects.create(values);
+      U.closeModal(); refresh(); U.notify(values.id ? "Project updated successfully." : "Project created successfully.");
+    } catch (err) {
+      error.textContent = err.message;
+      if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = project ? "Save changes" : "Create project"; }
+    }
   }); }
   function refresh() { if (location.pathname.endsWith("project-details.html")) { refreshDetails(); return; } document.getElementById("page-content").innerHTML = render(); if (window.lucide) lucide.createIcons(); }
   function bind() {
@@ -42,7 +50,7 @@
         if (!canEdit()) return; const project = S.projects.get(del.dataset.deleteProject); const linked = S.findings.list().filter((f) => f.projectId === project.id).length;
         const prompt = linked ? `This project has ${linked} linked finding${linked === 1 ? "" : "s"}. Remove those findings first from Audit findings, then delete the project.` : `Delete “${project.name}”? This action cannot be undone.`;
         if (linked) { U.notify(prompt, "error"); return; }
-        if (confirm(prompt)) { try { S.projects.delete(project.id); refresh(); U.notify("Project deleted."); } catch (error) { U.notify(error.message, "error"); } }
+        if (confirm(prompt)) { (async () => { try { await S.projects.delete(project.id); refresh(); U.notify("Project deleted."); } catch (error) { U.notify(error.message, "error"); } })(); }
       }
       if (event.target.closest("[data-clear-project-filters]")) { state = { ...state, query: "", status: "", village: "", page: 1 }; refresh(); }
       const pageButton = event.target.closest("[data-page]"); if (pageButton && !pageButton.disabled) { state.page = Number(pageButton.dataset.page); refresh(); }

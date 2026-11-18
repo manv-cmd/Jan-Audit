@@ -128,6 +128,20 @@
   if (page === "findings.html") window.JanAuditFindings.bind();
   if (page === "reports.html") window.JanAuditReports.bind();
   if (window.lucide) lucide.createIcons();
+  // Sync with backend API in the background so database changes persist across restarts
+  if (currentUser && window.JanAuditStorage && window.JanAuditStorage.syncFromApi) {
+    window.JanAuditStorage.syncFromApi().then((hasUpdate) => {
+      if (hasUpdate) {
+        if (page === "projects.html" && window.JanAuditProjects?.refresh) window.JanAuditProjects.refresh();
+        else if (page === "dashboard.html" && window.JanAuditDashboard) {
+          const el = document.getElementById("page-content");
+          if (el) el.innerHTML = window.JanAuditDashboard.render();
+          if (window.lucide) lucide.createIcons();
+        } else if (page === "findings.html" && window.JanAuditFindings?.refresh) window.JanAuditFindings.refresh();
+      }
+    });
+  }
+
   document.getElementById("app").addEventListener("click", (event) => {
     const logout = event.target.closest("[data-logout]"); if (logout) A.logout();
   });

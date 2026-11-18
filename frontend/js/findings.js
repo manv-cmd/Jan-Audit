@@ -23,11 +23,18 @@
     if (!canManage()) return U.notify("Your demo role does not have permission to record findings.", "error");
     if (!S.projects.list().length) return U.notify("Create a project before recording an audit finding.", "error");
     const root = U.modal("Record an audit finding", formMarkup(projectId), false);
-    root.querySelector("#finding-form").addEventListener("submit", (event) => {
+    root.querySelector("#finding-form").addEventListener("submit", async (event) => {
       event.preventDefault(); const form = event.currentTarget; if (!form.reportValidity()) return;
       const data = Object.fromEntries(new FormData(form)), error = root.querySelector("#finding-form-error");
-      try { S.findings.create(data); U.closeModal(); if (location.pathname.endsWith("project-details.html")) JanAuditProjects.refreshDetails(); else refresh(); U.notify("Audit finding recorded and linked to its project."); }
-      catch (err) { error.textContent = err.message; }
+      const submitBtn = form.querySelector("button[type='submit']");
+      if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = "Saving…"; }
+      try {
+        await S.findings.create(data);
+        U.closeModal(); if (location.pathname.endsWith("project-details.html")) JanAuditProjects.refreshDetails(); else refresh(); U.notify("Audit finding recorded and linked to its project.");
+      } catch (err) {
+        error.textContent = err.message;
+        if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = "Record finding"; }
+      }
     });
   }
   function view(findingId) {
@@ -43,7 +50,7 @@
     root.addEventListener("click", (event) => {
       if (event.target.closest("[data-add-finding]")) showForm(event.target.closest("[data-add-finding]").dataset.addFinding || "");
       const open = event.target.closest("[data-view-finding]"); if (open) view(open.dataset.viewFinding);
-      const del = event.target.closest("[data-delete-finding]"); if (del && canManage() && confirm("Delete this audit finding? The associated project will remain unchanged.")) { try { S.findings.delete(del.dataset.deleteFinding); refresh(); U.notify("Audit finding deleted."); } catch (error) { U.notify(error.message, "error"); } }
+      const del = event.target.closest("[data-delete-finding]"); if (del && canManage() && confirm("Delete this audit finding? The associated project will remain unchanged.")) { (async () => { try { await S.findings.delete(del.dataset.deleteFinding); refresh(); U.notify("Audit finding deleted."); } catch (error) { U.notify(error.message, "error"); } })(); }
       if (event.target.closest("[data-clear-finding-filters]")) { state = { query: "", project: "", village: "", severity: "" }; history.replaceState(null, "", "findings.html"); refresh(); }
     });
   }
